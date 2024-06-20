@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Friends</title>
+    <link rel="stylesheet" href="https://bootswatch.com/5/journal/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            height: 100%;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        header {
+            width: 100%;
+        }
+
+        main {
+            flex: 1;
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .friend, .user {
+            margin: 20px 0;
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            background-color: #f9f9f9;
+            transition: background-color 0.3s ease;
+        }
+
+        .friend:hover, .user:hover {
+            background-color: #f1f1f1;
+        }
+
+        .friend img, .user img {
+            border-radius: 50%;
+            margin-right: 20px;
+        }
+
+        .friend-info, .user-info {
+            flex: 1;
+        }
+
+        .friend-info a, .user-info a {
+            text-decoration: none;
+            color: #333;
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+
+        .friend-info a:hover, .user-info a:hover {
+            color: #f44336;
+        }
+
+        .friend-stats, .user-stats {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            font-size: 0.9em;
+            color: #666;
+        }
+        .btn-light {
+            border: 1px solid black;
+        }
+    </style>
+</head>
+<body>
+<header>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="/">DA NONNA PAOLA</a>
+        </div>
+    </nav>
+</header>
+<main>
+    <h1>I tuoi amici</h1>
+    <div>
+        {% for friend in friends %}
+            <div class="friend">
+                <img src="{{ friend.profile_picture.url }}" alt="{{ friend.username }}" width="50" height="50">
+                <div class="friend-info">
+                    <a href="{% url 'user-profile' user_id=friend.id %}">{{ friend.username }}</a>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</main>
+<footer style="text-align: center; padding: 20px;">
+    <a type="button" class="btn btn-light" href="/">Home</a>
+</footer>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('.follow-button').forEach(button => {
+            button.addEventListener('click', function() {
+                const userId = this.getAttribute('data-user-id');
+                const icon = this.querySelector('i');
+                const isFollowing = icon.classList.contains('fa-check');
+
+                fetch(`/follow-user/${userId}/`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': getCookie('csrftoken'),
+                        'Content-Type': 'application/json'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        icon.classList.toggle('fa-check', !isFollowing);
+                        icon.classList.toggle('fa-plus', isFollowing);
+                    }
+                });
+            });
+        });
+    });
+
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+</script>
+</body>
+</html>

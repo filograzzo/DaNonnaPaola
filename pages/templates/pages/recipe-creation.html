@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://bootswatch.com/5/journal/bootstrap.min.css">
+    <title>Crea una nuova ricetta</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            height: 100%;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+        }
+
+        header {
+            width: 100%;
+        }
+
+        main {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .recipe-form {
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            background-color: #f9f9f9;
+            text-align: center;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .recipe-form h1 {
+            margin-bottom: 20px;
+        }
+
+        .recipe-form label {
+            font-weight: bold;
+        }
+
+        .recipe-form input[type="text"],
+        .recipe-form textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            height: auto;
+            overflow-y: hidden;
+        }
+
+        .recipe-form textarea {
+            resize: none;
+        }
+
+        .recipe-form button[type="submit"] {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .recipe-form button[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+
+        .btn-light {
+            border: 1px solid black;
+        }
+
+        .textarea {
+            padding: 5px;
+        }
+
+        .image-preview {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 10px;
+}
+
+#preview-container {
+    width: 200px; /* dimensione desiderata */
+    height: 200px; /* dimensione desiderata */
+    display: flex;
+    justify-content: center;
+    align-items: center; /* centra verticalmente */
+    overflow: hidden; /* nasconde parti dell'immagine che superano le dimensioni specificate */
+    border-radius: 5px;
+    border: 1px solid #ccc; /* aggiunto un bordo per migliorare la visibilità */
+    margin-top: 5px; /* spazio sopra l'anteprima */
+}
+
+#preview-container img {
+    width: 100%;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+}
+
+
+        .file-input-container {
+            width: 30%;
+            margin: 0 auto;
+            text-align: center;
+            margin-top: 10px;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+<header>
+    <nav class="navbar navbar-expand-lg bg-primary" data-bs-theme="dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/" style="font-size: 24px; text-align: center; margin-left:10%;">DA NONNA PAOLA</a>
+        </div>
+    </nav>
+</header>
+<main>
+    <div class="container">
+        <div class="recipe-form">
+            <h1>Crea una nuova ricetta</h1>
+            <form method="POST" enctype="multipart/form-data" action="{% url 'recipe-creation' %}">
+                <div id="image-preview-container" class="image-preview" style="display:none;">
+                    <div id="preview-container">
+                        <img id="image-preview" src="#" alt="Preview dell'immagine" >
+                    </div>
+                </div>
+                {% csrf_token %}
+                {{ form.as_p }}
+                <input class="btn btn-primary" type="submit" value="Crea"/>
+                <a type="button" class="btn btn-light" href="/">Home</a>
+            </form>
+        </div>
+    </div>
+</main>
+<script>
+// Funzione per mostrare la preview dell'immagine
+function previewImage(event) {
+    var imageElement = document.getElementById('image-preview');
+    var imageContainer=document.getElementById('image-preview-container');
+    if (event.target.files.length > 0) {
+        imageContainer.style.display = 'flex';
+        imageElement.src = URL.createObjectURL(event.target.files[0]);
+    } else {
+        imageContainer.style.display = 'none';
+        imageElement.src = '#'; // Reset dell'immagine
+    }
+}
+
+// Aggiungi un ascoltatore di eventi al campo di input dell'immagine
+document.getElementById('id_image').addEventListener('change', previewImage);
+</script>
+
+
+</body>
+</html>

@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://bootswatch.com/5/journal/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <title>Homepage</title>
+    <style>
+        /* GENERALI */
+        * {
+          margin: 0;
+          padding: 0;
+          box-sizing: border-box;
+          font-family: Arial, sans-serif;
+        }
+
+        /* Stile generale per il corpo */
+        body {
+          line-height: 1.6;
+          color: #333;
+          background-color: #f8f8f8;
+        }
+
+        main{
+            margin-left:10%;
+            margin-right:10%;
+        }
+
+        /* FOOTER */
+        footer {
+          background-color: #333;
+          color: white;
+          text-align: center;
+          padding: 20px 0;
+        }
+
+        footer .footer-links a {
+          color: white;
+          text-decoration: none;
+          margin: 0 10px;
+        }
+
+        footer .footer-links a:hover {
+          text-decoration: underline;
+        }
+
+        footer .social-media {
+          margin: 10px 0;
+        }
+
+        footer .social-media img {
+          width: 24px;
+          margin: 0 5px;
+        }
+
+        /* Hero section */
+        .hero {
+          background: url('https://www.cucchiaio.it/content/dam/cucchiaio/it/ricette/2022/10/pollo-agrodolce/pollo-agrodolce-finale.jpg') no-repeat center center/cover;
+          color: white;
+          text-align: center;
+          padding: 100px 20px;
+        }
+
+        .hero-h1 {
+          font-size: 48px;
+        }
+
+        .hero-p {
+          font-size: 24px;
+        }
+
+        .profile-page {
+          width: 100%;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          padding: 20px;
+        }
+
+        .profile-form {
+          max-width: 700px;
+          width: 100%;
+          padding: 20px 40px;
+          border: 1px solid #ccc;
+          border-radius: 10px;
+          box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+          background-color: #f9f9f9;
+          text-align: center;
+        }
+
+        .profile-form h1 {
+          margin-bottom: 20px;
+        }
+
+        .profile-form .profile-picture {
+          width: 200px;
+          height: 200px;
+          border-radius: 50%;
+          object-fit: cover;
+          margin-bottom: 20px;
+          cursor: pointer;
+          transition: transform 0.3s ease;
+        }
+
+        .profile-form .profile-picture:hover {
+          transform: scale(1.1);
+        }
+
+        .btn-primary, .btn-danger {
+          margin-top: 20px;
+        }
+
+        .btn-light {
+          margin-top: 20px;
+          border: 1px solid black;
+        }
+
+        .card {
+          background-color: #f9f9f9;
+          box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .profile-class {
+          display: flex;
+          justify-content: center;
+        }
+
+        .profile-picture-container {
+          height: 100%;
+          display: flex;
+          justify-content: center;
+          margin-top:0px;
+        }
+
+        .recipe-image {
+          width: 75%;
+          height: auto;
+        }
+
+        .like-button {
+          background: none;
+          border: none;
+          outline: none;
+          cursor: pointer;
+        }
+
+        .like-button .fas.fa-heart {
+          color: red;
+        }
+
+        .like-button .far.fa-heart {
+          color: grey;
+        }
+
+        .like-button .fas.fa-heart,
+        .like-button .far.fa-heart {
+          font-size: 24px;
+          width: 24px;
+          height: 24px;
+          display: inline-block;
+        }
+
+        .follow-button {
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+
+        .follow-button .fa-check {
+            color: green;
+        }
+
+        .btn-outline-danger {
+            margin-left: 20px;
+        }
+
+        .follow-button:hover {
+            background-color: #e6e7e8; !important
+        }
+
+        .nome-utente a {
+            color: black;
+            text-decoration: none;
+        }
+
+        .nome-utente a:hover {
+            text-decoration:underline;
+            background-color: #e6e7e8; !important
+        }
+    </style>
+</head>
+<body>
+<header>
+    <nav class="navbar navbar-expand-lg bg-primary" data-bs-theme="dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/">DA NONNA PAOLA</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarColor01" aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarColor01">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/">Home<span class="visually-hidden">(current)</span></a>
+                    </li>
+                    {% if user.is_authenticated %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="/my-likes">I tuoi mi piace</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/friends">Amici</a>
+                    </li>
+                    {% endif %}
+                </ul>
+                <ul class="navbar-nav ms-auto">
+                    {% if user.is_authenticated  %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="/my-profile">Il mio profilo</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'user-logout' %}">Logout</a>
+                    </li>
+                    {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="/my-login">Accedi</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/register">Iscriviti</a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+</header>
+<main>
+    <section class="hero">
+        <div class="hero-h1">
+            <h1>Benvenuti da Nonna Paola</h1>
+        </div>
+        <div class="hero-p">
+            <p>Scopri nuove idee per ogni occasione</p>
+        </div>
+    </section>
+    <div class="recipes-section" style="margin-bottom:20px; margin-top:30px;">
+       <div class="d-flex justify-content-between align-items-center mb-4">
+    {% if request.GET.q and request.GET.category %}
+    <h1>Risultati per "{{ request.GET.q }}" nella categoria "{{ request.GET.category }}"</h1>
+    <a href="{% url '' %}" class="btn btn-outline-danger">Annulla</a>
+    {% elif request.GET.q %}
+    <h1>Risultati per "{{ request.GET.q }}"</h1>
+    <a href="{% url '' %}" class="btn btn-outline-danger">Annulla</a>
+    {% elif request.GET.category %}
+    <h1>Risultati per "{{ request.GET.category }}"</h1>
+    <a href="{% url '' %}" class="btn btn-outline-danger">Annulla</a>
+    {% else %}
+    <h1>Tutte le ricette</h1>
+    {% endif %}
+    <form class="d-flex" method="GET" action="{% url 'recipe_search' %}">
+        <input class="form-control me-2" type="search" placeholder="Cerca" aria-label="Search" name="q" value="{{ request.GET.q }}">
+        <select class="form-select me-2" name="category">
+            <option value="">Tutte le categorie</option>
+            <option value="ANTIPASTI">Antipasti</option>
+            <option value="PRIMI">Primi</option>
+            <option value="SECONDI">Secondi</option>
+            <option value="DOLCI">Dolci</option>
+            <option value="Più likes">Più likes</option>
+        </select>
+        <button class="btn btn-outline-primary" type="submit">Cerca</button>
+    </form>
+</div>
+
+        {% if recipes %}
+        <div class="row row-cols-1 g-4">
+            {% for recipe in recipes %}
+            <div class="col">
+                <div class="card">
+                    <div class="row g-0">
+                        <div class="col-md-4">
+                            <div class="profile-picture-container d-flex justify-content-center align-items-center">
+                                <img src="{{ recipe.image.url }}" class="img-fluid rounded-start recipe-image" alt="{{ recipe.title }}">
+                            </div>
+                        </div>
+                        <div class="col-md-8">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between">
+                                    <h4 class="card-title">{{ recipe.title }}</h4>
+                                    <button class="like-button" data-recipe-id="{{ recipe.id }}">
+                                        {% if user in recipe.likes.all %}
+                                            <i class="fas fa-heart liked"></i>
+                                        {% else %}
+                                            <i class="far fa-heart"></i>
+                                        {% endif %}
+                                    </button>
+                                </div>
+                                <p class="card-text"><strong>Tempo di preparazione:</strong> {{ recipe.preparation_time }} minuti</p>
+                                <p class="card-text"><strong>Categoria:</strong> {{ recipe.get_category_display }}</p>
+                                <p class="card-text"><strong>Mi piace:</strong> <span class="num-likes">{{ recipe.num_likes }}</span></p>
+                                <p><strong>Descrizione:</strong></p>
+                                <p>{{ recipe.description }}</p>
+                                <p><strong>Ingredienti:</strong></p>
+                                <p>{{ recipe.ingredients }}</p>
+                                <p><strong>Preparazione:</strong></p>
+                                <p>{{ recipe.preparation }}</p>
+                                <div class="author-name d-flex align-items-center">
+                                    <div class="nome-utente" style="transform: translateY(+5%); position: relative;">
+                                        <strong>Autore:</strong> <a href="{% url 'user-profile' user_id=recipe.user.id %}" class="text-dark">{{ recipe.user.username }}</a>
+                                    </div>
+                                    <button class="follow-button btn btn-outline-primary ms-2" data-user-id="{{ recipe.user.id }}" data-author-id="{{ recipe.user.id }}">
+                                        {% if request.user in recipe.user.followers.all %}
+                                            <i class="fas fa-check"></i>
+                                        {% else %}
+                                            <i class="fas fa-plus" style="color: #f44336;"></i>
+                                        {% endif %}
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <p class="mt-4">Non hai ancora creato nessuna ricetta.</p>
+        {% endif %}
+    </div>
+</main>
+<footer>
+    <div class="footer-links">
+        <a href="#about">Chi Siamo</a>
+        <a href="#contact">Contatti</a>
+        <a href="#faq">FAQ</a>
+        <a href="#privacy">Privacy Policy</a>
+    </div>
+    <div class="social-media">
+        [Icone Social]
+    </div>
+    <p>© 2024 Nome Sito. Tutti i diritti riservati.</p>
+</footer>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.like-button').forEach(button => {
+        button.addEventListener('click', function() {
+            if (!{{ user.is_authenticated|lower }}) {
+                window.location.href = '/my-login';
+                return;
+            }
+            const recipeId = this.getAttribute('data-recipe-id');
+            const icon = this.querySelector('i');
+            const isLiked = icon.classList.contains('liked');
+            const numLikesSpan = this.closest('.card-body').querySelector('.num-likes');
+
+            fetch(`/like-recipe/${recipeId}/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': getCookie('csrftoken'),
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ liked: !isLiked })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    icon.classList.toggle('liked', !isLiked);
+                    icon.classList.toggle('fas', !isLiked);
+                    icon.classList.toggle('far', isLiked);
+                    numLikesSpan.textContent = data.num_likes;
+                }
+            });
+        });
+    });
+
+    document.querySelectorAll('.follow-button').forEach(button => {
+        button.addEventListener('click', function() {
+            if (!{{ user.is_authenticated|lower }}) {
+                window.location.href = '/my-login';
+                return;
+            }
+            const userId = this.getAttribute('data-user-id');
+            const authorId = this.getAttribute('data-author-id');
+            const isFollowing = this.querySelector('i').classList.contains('fa-check');
+
+            fetch(`/follow-user/${userId}/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': getCookie('csrftoken'),
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    document.querySelectorAll(`.follow-button[data-author-id="${authorId}"]`).forEach(followButton => {
+                        const icon = followButton.querySelector('i');
+                        icon.classList.toggle('fa-check', !isFollowing);
+                        icon.classList.toggle('fa-plus', isFollowing);
+                        if (isFollowing) {
+                            icon.style.color = '#f44336';
+                        } else {
+                            icon.style.color = '';
+                        }
+                    });
+                }
+            });
+        });
+    });
+});
+
+
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+</script>
+</body>
+</html>

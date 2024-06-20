@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profilo Utente</title>
+    <link rel="stylesheet" href="https://bootswatch.com/5/journal/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        .profile-page {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .profile-info {
+            max-width: 700px;
+            width: 100%;
+            padding: 20px 40px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            background-color: #f9f9f9;
+            text-align: center;
+        }
+        .profile-picture {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 20px;
+        }
+        .card {
+            background-color: #f9f9f9;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .profile-picture-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        .recipe-image {
+            width: 75%;
+            height: auto;
+        }
+        .like-button {
+            background: none;
+            border: none;
+            outline: none;
+            cursor: pointer;
+        }
+        .like-button .fas.fa-heart {
+            color: red;
+        }
+        .like-button .far.fa-heart {
+            color: grey;
+        }
+        .like-button .fas.fa-heart,
+        .like-button .far.fa-heart {
+            font-size: 24px;
+            width: 24px;
+            height: 24px;
+            display: inline-block;
+        }
+        .follow-button {
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+        .follow-button .fa-check {
+            color: green;
+        }
+        .btn-outline-danger {
+            margin-left: 20px;
+        }
+        .follow-button:hover {
+            background-color: #e6e7e8 !important;
+        }
+        .btn-light {
+            border: 1px solid black;
+        }
+    </style>
+</head>
+<body>
+<header>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="/">DA NONNA PAOLA</a>
+        </div>
+    </nav>
+</header>
+<main>
+    <div class="profile-page">
+        <div class="profile-info">
+            <h1>Profilo di {{ user.first_name }} {{ user.last_name }}</h1>
+            {% if user.profile_picture %}
+                <img class="profile-picture" src="{{ user.profile_picture.url }}" alt="Profile Picture">
+            {% else %}
+                <p>Immagine del profilo non disponibile.</p>
+            {% endif %}
+            <p><strong>Nome:</strong> {{ user.first_name }}</p>
+            <p><strong>Cognome:</strong> {{ user.last_name }}</p>
+            <p><strong>Bio:</strong> {{ user.bio }}</p>
+            <button class="follow-button btn btn-outline-primary ms-2" data-user-id="{{ user.id }}" data-author-id="{{ user.id }}">
+                {% if request.user in user.followers.all %}
+                    <i class="fas fa-check"></i>
+                {% else %}
+                    <i class="fas fa-plus" style="color: #f44336;"></i>
+                {% endif %}
+            </button>
+        </div>
+    </div>
+    <div class="recipes-section" style="margin-bottom:30px; padding-left:10%; padding-right:10%;">
+        <h2 class="mb-4">Le ricette di {{ user.first_name }}</h2>
+        {% if recipes %}
+        <div class="row row-cols-1 g-4">
+            {% for recipe in recipes %}
+                <div class="col">
+                    <div class="card">
+                        <div class="row g-0">
+                            <div class="col-md-4">
+                                <div class="profile-picture-container d-flex justify-content-center align-items-center">
+                                    <img src="{{ recipe.image.url }}" class="img-fluid rounded-start recipe-image" alt="{{ recipe.title }}">
+                                </div>
+                            </div>
+                            <div class="col-md-8">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between">
+                                        <h4 class="card-title">{{ recipe.title }}</h4>
+                                        <button class="like-button" data-recipe-id="{{ recipe.id }}">
+                                            {% if user in recipe.likes.all %}
+                                                <i class="fas fa-heart liked"></i>
+                                            {% else %}
+                                                <i class="far fa-heart"></i>
+                                            {% endif %}
+                                        </button>
+                                    </div>
+                                    <p class="card-text">Tempo di preparazione: {{ recipe.preparation_time }} minuti</p>
+                                    <h6>Descrizione:</h6>
+                                    <p>{{ recipe.description }}</p>
+                                    <h6 class="mt-4">Ingredienti:</h6>
+                                    <p>{{ recipe.ingredients }}</p>
+                                    <h6 class="mt-4">Preparazione:</h6>
+                                    <p>{{ recipe.preparation }}</p>
+                                    <div class="author-name d-flex align-items-center">
+                                    <div style="transform: translateY(+5%); position: relative;">
+                                        Autore: {{ recipe.user }}
+                                    </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <p class="mt-4">Non hai ancora creato nessuna ricetta.</p>
+        {% endif %}
+    </div>
+</main>
+<footer style="text-align: center; padding: 20px;">
+    <a type="button" class="btn btn-light" href="/">Home</a>
+</footer>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.like-button').forEach(button => {
+        button.addEventListener('click', function() {
+            const recipeId = this.getAttribute('data-recipe-id');
+            const icon = this.querySelector('i');
+            const isLiked = icon.classList.contains('liked');
+
+            fetch(`/like-recipe/${recipeId}/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': getCookie('csrftoken'),
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ liked: !isLiked })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    icon.classList.toggle('liked', !isLiked);
+                    icon.classList.toggle('fas', !isLiked);
+                    icon.classList.toggle('far', isLiked);
+                }
+            });
+        });
+    });
+
+    document.querySelectorAll('.follow-button').forEach(button => {
+        button.addEventListener('click', function() {
+            const userId = this.getAttribute('data-user-id');
+            const authorId = this.getAttribute('data-author-id');
+            const isFollowing = this.querySelector('i').classList.contains('fa-check');
+
+            fetch(`/follow-user/${userId}/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': getCookie('csrftoken'),
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    document.querySelectorAll(`.follow-button[data-author-id="${authorId}"]`).forEach(followButton => {
+                        const icon = followButton.querySelector('i');
+                        icon.classList.toggle('fa-check', !isFollowing);
+                        icon.classList.toggle('fa-plus', isFollowing);
+                        if (isFollowing) {
+                            icon.style.color = '#f44336';  // Cambia il colore a rosso
+                        } else {
+                            icon.style.color = '';  // Rimuove qualsiasi stile di colore
+                        }
+                    });
+                }
+            });
+        });
+    });
+});
+
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+</script>
+</body>
+</html>

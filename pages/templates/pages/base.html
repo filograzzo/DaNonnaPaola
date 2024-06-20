@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+     <link rel="stylesheet" href="https://bootswatch.com/5/journal/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <title>Html di base</title>
+    <style>
+/* GENERALI */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
+}
+
+/* Stile generale per il corpo */
+body {
+  line-height: 1.6;
+  color: #333;
+  background-color: #f8f8f8;
+
+}
+
+main{
+    margin-left:10%;
+  margin-right:10%;
+}
+
+
+    /* FOOTER */
+footer {
+  background-color: #333;
+  color: white;
+  text-align: center;
+  padding: 20px 0;
+}
+
+footer .footer-links a {
+  color: white;
+  text-decoration: none;
+  margin: 0 10px;
+}
+
+footer .footer-links a:hover {
+  text-decoration: underline;
+}
+
+footer .social-media {
+  margin: 10px 0;
+}
+
+footer .social-media img {
+  width: 24px;
+  margin: 0 5px;
+}
+
+
+
+        {% block extra_css %}
+        {% endblock %}
+    </style>
+</head>
+<body>
+<header>
+    <nav class="navbar navbar-expand-lg bg-primary" data-bs-theme="dark">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="#">DA NONNA PAOLA</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarColor01" aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarColor01">
+      <ul class="navbar-nav me-auto">
+        <li class="nav-item">
+          <a class="nav-link active" href="#">Home
+            <span class="visually-hidden">(current)</span>
+          </a>
+        </li>
+          {% if user.is_authenticated %}
+        <li class="nav-item">
+          <a class="nav-link" href="my-likes">My likes</a>
+        </li>
+          <li class="nav-item">
+              <a class="nav-link" href="friends">Friends</a>
+          </li>
+        {% endif %}
+      </ul>
+        <ul class="navbar-nav ms-auto">
+    {% if user.is_authenticated %}
+        <li class="nav-item">
+            <a class="nav-link" href="my-profile">Il mio profilo</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{% url 'user-logout' %}">Logout</a>
+        </li>
+    {% else %}
+        <li class="nav-item">
+            <a class="nav-link" href="my-login">Accedi</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="register">Iscriviti</a>
+        </li>
+    {% endif %}
+</ul>
+
+    </div>
+  </div>
+</nav>
+</header>
+
+{% block content %}
+{% endblock %}
+
+<footer>
+    <div class="footer-links">
+        <a href="#about">Chi Siamo</a>
+        <a href="#contact">Contatti</a>
+        <a href="#faq">FAQ</a>
+        <a href="#privacy">Privacy Policy</a>
+    </div>
+    <div class="social-media">
+        [Icone Social]
+    </div>
+    <p>© 2024 Nome Sito. Tutti i diritti riservati.</p>
+</footer>
+
+
+</body>
+</html>
