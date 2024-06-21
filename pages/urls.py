@@ -19,7 +19,7 @@ urlpatterns = [
     path('friends/', views.friends_list, name='friends_list'),
     path('follow-user/<int:user_id>/', views.follow_user, name='follow_user'),
     path('user/<int:user_id>/', views.user_profile, name='user-profile'),
-]
+]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
